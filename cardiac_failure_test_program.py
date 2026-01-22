@@ -55,17 +55,17 @@ def predict_risk(inputs: dict):
 
 if __name__ == "__main__":
     sample_patient = {
-        "age": 20,  # 55 years old
-        "gender": 1,  # 1 = Female
-        "height": 165,  # cm
-        "weight": 65.0,  # kg
-        "ap_hi": 120,  # Systolic BP (Normal)
-        "ap_lo": 80,  # Diastolic BP (Normal)
-        "cholesterol": 1,  # 1 = Normal
-        "gluc": 1,  # 1 = Normal
-        "smoke": 0,  # 0 = No
-        "alco": 0,  # 0 = No
-        "active": 1  # 1 = Yes
+        "age": 30,
+        "gender": 1,
+        "height": 165,
+        "weight": 65.0,
+        "ap_hi": 120,
+        "ap_lo": 80,
+        "cholesterol": 1,
+        "gluc": 1,
+        "smoke": 0,
+        "alco": 0,
+        "active": 1
     }
 
     print("Processing patient data...")
