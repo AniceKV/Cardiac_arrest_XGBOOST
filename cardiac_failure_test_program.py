@@ -1,7 +1,7 @@
 import joblib
 import pandas as pd
 
-MODEL_PATH = "cardiac_failure_detection.pkl"
+MODEL_PATH = "models/cardiac_failure_detection.pkl"
 model = joblib.load(MODEL_PATH)
 
 THRESHOLD = 0.35
@@ -57,12 +57,12 @@ if __name__ == "__main__":
     sample_patient = {
         "age": 30,
         "gender": 1,
-        "height": 165,
-        "weight": 65.0,
+        "height": 176,
+        "weight": 180.0,
         "ap_hi": 120,
         "ap_lo": 80,
         "cholesterol": 1,
-        "gluc": 1,
+        "gluc": 0,
         "smoke": 0,
         "alco": 0,
         "active": 1
