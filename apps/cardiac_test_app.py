@@ -7,7 +7,7 @@ st.set_page_config(
     page_title="Cardiac Risk Assessment",
     page_icon="❤️‍🩹",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
 # Custom CSS for better styling
@@ -26,6 +26,13 @@ st.markdown("""
         text-align: center;
         margin-bottom: 2rem;
     }
+    .section-card {
+        background-color: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        border: 1px solid #e0e0e0;
+    }
     .risk-box {
         padding: 20px;
         border-radius: 10px;
@@ -39,6 +46,9 @@ st.markdown("""
     .moderate { background-color: #fff3cd; color: #856404; }
     .high { background-color: #f8d7da; color: #721c24; }
     .very-high { background-color: #f5c6cb; color: #721c24; }
+    div[data-testid="stHorizontalBlock"] {
+        gap: 1rem;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -53,14 +63,12 @@ FEATURES = ["age", "gender", "height", "weight", "bmi",
             "smoke", "alco", "active"]
 
 
-
-
 @st.cache_resource
 def load_model():
     try:
         return joblib.load(MODEL_PATH)
     except FileNotFoundError:
-        st.error(f" Model file '{MODEL_PATH}' not found. Please ensure the model is in the correct directory.")
+        st.error(f"⚠️ Model file '{MODEL_PATH}' not found. Please ensure the model is in the correct directory.")
         return None
 
 
@@ -69,7 +77,7 @@ def predict_risk(inputs: dict, model):
     X['age'] = X['age'] / 100.0
     X['gender'] = X['gender'] - 1
     X['cholesterol'] = (X['cholesterol'] - 1) / 2.0
-    X['bmi']=X['weight']/((X['height']*0.01)**2)
+    X['bmi'] = X['weight'] / ((X['height'] * 0.01) ** 2)
     prob = model.predict_proba(X)[0, 1]
     prediction = int(prob >= THRESHOLD)
 
@@ -129,42 +137,81 @@ def main():
     if model is None:
         st.stop()
 
-    st.sidebar.header(" Patient Information")
-    st.sidebar.markdown("---")
+    # Initialize session state for form data
+    if 'form_submitted' not in st.session_state:
+        st.session_state.form_submitted = False
 
-    st.sidebar.subheader("Demographics")
-    age = st.sidebar.number_input("Age (years)", min_value=1, max_value=120, value=55, step=1)
-    gender = st.sidebar.selectbox("Gender", options=[1, 2], format_func=lambda x: "Female" if x == 1 else "Male")
-    height = st.sidebar.number_input("Height (cm)", min_value=100, max_value=250, value=165, step=1)
-    weight = st.sidebar.number_input("Weight (kg)", min_value=30.0, max_value=300.0, value=65.0, step=0.5)
+    # Input Form
+    with st.form("patient_form"):
+        st.markdown("### 📋 Patient Information")
 
-    st.sidebar.subheader("Vital Signs")
-    ap_hi = st.sidebar.number_input("Systolic BP (mmHg)", min_value=80, max_value=250, value=120, step=1)
-    ap_lo = st.sidebar.number_input("Diastolic BP (mmHg)", min_value=40, max_value=150, value=80, step=1)
+        # Demographics Section
+        st.markdown("#### 👤 Demographics")
+        demo_col1, demo_col2, demo_col3, demo_col4 = st.columns(4)
 
-    st.sidebar.subheader("Lab Results")
-    cholesterol = st.sidebar.selectbox(
-        "Cholesterol Level",
-        options=[1, 2, 3],
-        format_func=lambda x: {1: "Normal", 2: "Above Normal", 3: "Well Above Normal"}[x]
-    )
-    gluc = st.sidebar.selectbox(
-        "Glucose Level",
-        options=[1, 2, 3],
-        format_func=lambda x: {1: "Normal", 2: "Above Normal", 3: "Well Above Normal"}[x]
-    )
+        with demo_col1:
+            age = st.number_input("Age (years)", min_value=1, max_value=120, value=55, step=1)
+        with demo_col2:
+            gender = st.selectbox("Gender", options=[1, 2], format_func=lambda x: "Female" if x == 1 else "Male")
+        with demo_col3:
+            height = st.number_input("Height (cm)", min_value=100, max_value=250, value=165, step=1)
+        with demo_col4:
+            weight = st.number_input("Weight (kg)", min_value=30.0, max_value=300.0, value=65.0, step=0.5)
 
-    # Lifestyle Factors
-    st.sidebar.subheader("Lifestyle")
-    smoke = st.sidebar.checkbox("Smoker")
-    alco = st.sidebar.checkbox("Alcohol Consumer")
-    active = st.sidebar.checkbox("Physically Active", value=True)
+        st.markdown("---")
 
-    st.sidebar.markdown("---")
-    predict_button = st.sidebar.button(" Assess Risk", type="primary", use_container_width=True)
+        # Vital Signs Section
+        st.markdown("#### 🩺 Vital Signs")
+        vital_col1, vital_col2 = st.columns(2)
 
-    # Main content area
-    if predict_button:
+        with vital_col1:
+            ap_hi = st.number_input("Systolic BP (mmHg)", min_value=80, max_value=250, value=120, step=1)
+        with vital_col2:
+            ap_lo = st.number_input("Diastolic BP (mmHg)", min_value=40, max_value=150, value=80, step=1)
+
+        st.markdown("---")
+
+        # Lab Results Section
+        st.markdown("#### 🧪 Lab Results")
+        lab_col1, lab_col2 = st.columns(2)
+
+        with lab_col1:
+            cholesterol = st.selectbox(
+                "Cholesterol Level",
+                options=[1, 2, 3],
+                format_func=lambda x: {1: "Normal", 2: "Above Normal", 3: "Well Above Normal"}[x]
+            )
+        with lab_col2:
+            gluc = st.selectbox(
+                "Glucose Level",
+                options=[1, 2, 3],
+                format_func=lambda x: {1: "Normal", 2: "Above Normal", 3: "Well Above Normal"}[x]
+            )
+
+        st.markdown("---")
+
+        # Lifestyle Factors Section
+        st.markdown("#### 🏃 Lifestyle Factors")
+        lifestyle_col1, lifestyle_col2, lifestyle_col3 = st.columns(3)
+
+        with lifestyle_col1:
+            smoke = st.checkbox("Smoker")
+        with lifestyle_col2:
+            alco = st.checkbox("Alcohol Consumer")
+        with lifestyle_col3:
+            active = st.checkbox("Physically Active", value=True)
+
+        st.markdown("---")
+
+        # Submit button centered
+        col1, col2, col3 = st.columns([1, 1, 1])
+        with col2:
+            submit_button = st.form_submit_button("🔍 Assess Cardiac Risk", type="primary", use_container_width=True)
+
+    # Process form submission
+    if submit_button:
+        st.session_state.form_submitted = True
+
         # Prepare input data
         inputs = {
             "age": age,
@@ -181,19 +228,22 @@ def main():
         }
 
         # Get prediction
-        with st.spinner("Analyzing patient data..."):
+        with st.spinner("🔄 Analyzing patient data..."):
             result = predict_risk(inputs, model)
 
-        # Display results
-        col1, col2 = st.columns([1, 1])
+        st.markdown("---")
+        st.markdown("## 📊 Assessment Results")
 
-        with col1:
-            st.subheader(" Risk Assessment")
+        # Display results in columns
+        result_col1, result_col2 = st.columns([1, 1])
+
+        with result_col1:
+            st.markdown("### 📈 Risk Visualization")
             fig = create_gauge_chart(result['probability'])
             st.plotly_chart(fig, use_container_width=True)
 
-        with col2:
-            st.subheader(" Assessment Results")
+        with result_col2:
+            st.markdown("### 🎯 Risk Analysis")
             st.markdown(f"**Risk Probability:** {result['probability'] * 100:.2f}%")
 
             # Risk zone with color coding
@@ -211,19 +261,19 @@ def main():
             st.markdown("---")
             if result['screening_prediction'] == 1:
                 st.error(
-                    "**POSITIVE SCREENING**\n\nRecommendation: Further cardiac evaluation advised. Please consult with a cardiologist.")
+                    "**⚠️ POSITIVE SCREENING**\n\nRecommendation: Further cardiac evaluation advised. Please consult with a cardiologist.")
             else:
                 st.success(
-                    "**NEGATIVE SCREENING**\n\nRecommendation: Patient appears to be at lower risk. Continue regular health monitoring.")
+                    "**✅ NEGATIVE SCREENING**\n\nRecommendation: Patient appears to be at lower risk. Continue regular health monitoring.")
 
             # BMI calculation
             bmi = weight / ((height / 100) ** 2)
             st.markdown("---")
             st.markdown(f"**Body Mass Index (BMI):** {bmi:.1f}")
 
-        # Additional Information
+        # Patient Summary
         st.markdown("---")
-        st.subheader(" Patient Summary")
+        st.markdown("### 📋 Patient Summary")
 
         summary_col1, summary_col2, summary_col3 = st.columns(3)
 
@@ -242,24 +292,25 @@ def main():
             st.metric("Alcohol", "Yes" if alco else "No")
             st.metric("Physical Activity", "Yes" if active else "No")
 
-    else:
+    elif not st.session_state.form_submitted:
         # Initial state - show instructions
-        st.info(" Please enter patient information in the sidebar and click 'Assess Risk' to begin the evaluation.")
+        st.info(
+            "ℹ️ Please fill in the patient information above and click 'Assess Cardiac Risk' to begin the evaluation.")
 
         col1, col2, col3 = st.columns(3)
 
         with col1:
-            st.markdown("### Purpose")
+            st.markdown("### 🎯 Purpose")
             st.write(
                 "This tool provides preliminary cardiac risk assessment based on patient vitals, lab results, and lifestyle factors.")
 
         with col2:
-            st.markdown("###  How It Works")
+            st.markdown("### ⚙️ How It Works")
             st.write(
                 "Using machine learning algorithms trained on cardiovascular health data to identify potential risk factors.")
 
         with col3:
-            st.markdown("### Disclaimer")
+            st.markdown("### ⚠️ Disclaimer")
             st.write(
                 "This is a screening tool only. Always consult healthcare professionals for medical diagnosis and treatment.")
 
@@ -267,7 +318,7 @@ def main():
     st.markdown("---")
     st.markdown(
         "<div style='text-align: center; color: #666; font-size: 0.9rem;'>"
-        " <b>Medical Disclaimer:</b> This application is for screening purposes only and does not replace professional medical advice, diagnosis, or treatment."
+        "⚕️ <b>Medical Disclaimer:</b> This application is for screening purposes only and does not replace professional medical advice, diagnosis, or treatment."
         "</div>",
         unsafe_allow_html=True
     )
