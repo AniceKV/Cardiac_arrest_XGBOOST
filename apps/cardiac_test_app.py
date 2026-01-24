@@ -68,7 +68,7 @@ def load_model():
     try:
         return joblib.load(MODEL_PATH)
     except FileNotFoundError:
-        st.error(f"⚠️ Model file '{MODEL_PATH}' not found. Please ensure the model is in the correct directory.")
+        st.error(f" Model file '{MODEL_PATH}' not found. Please ensure the model is in the correct directory.")
         return None
 
 
@@ -143,10 +143,10 @@ def main():
 
     # Input Form
     with st.form("patient_form"):
-        st.markdown("### 📋 Patient Information")
+        st.markdown("###  Patient Information")
 
         # Demographics Section
-        st.markdown("#### 👤 Demographics")
+        st.markdown("####  Demographics")
         demo_col1, demo_col2, demo_col3, demo_col4 = st.columns(4)
 
         with demo_col1:
@@ -161,7 +161,7 @@ def main():
         st.markdown("---")
 
         # Vital Signs Section
-        st.markdown("#### 🩺 Vital Signs")
+        st.markdown("####  Vital Signs")
         vital_col1, vital_col2 = st.columns(2)
 
         with vital_col1:
@@ -172,7 +172,7 @@ def main():
         st.markdown("---")
 
         # Lab Results Section
-        st.markdown("#### 🧪 Lab Results")
+        st.markdown("####  Lab Results")
         lab_col1, lab_col2 = st.columns(2)
 
         with lab_col1:
@@ -191,7 +191,7 @@ def main():
         st.markdown("---")
 
         # Lifestyle Factors Section
-        st.markdown("#### 🏃 Lifestyle Factors")
+        st.markdown("####  Lifestyle Factors")
         lifestyle_col1, lifestyle_col2, lifestyle_col3 = st.columns(3)
 
         with lifestyle_col1:
@@ -228,11 +228,11 @@ def main():
         }
 
         # Get prediction
-        with st.spinner("🔄 Analyzing patient data..."):
+        with st.spinner("Analyzing patient data..."):
             result = predict_risk(inputs, model)
 
         st.markdown("---")
-        st.markdown("## 📊 Assessment Results")
+        st.markdown("## Assessment Results")
 
         # Display results in columns
         result_col1, result_col2 = st.columns([1, 1])
@@ -243,7 +243,7 @@ def main():
             st.plotly_chart(fig, use_container_width=True)
 
         with result_col2:
-            st.markdown("### 🎯 Risk Analysis")
+            st.markdown("### Risk Analysis")
             st.markdown(f"**Risk Probability:** {result['probability'] * 100:.2f}%")
 
             # Risk zone with color coding
@@ -261,10 +261,10 @@ def main():
             st.markdown("---")
             if result['screening_prediction'] == 1:
                 st.error(
-                    "**⚠️ POSITIVE SCREENING**\n\nRecommendation: Further cardiac evaluation advised. Please consult with a cardiologist.")
+                    "** POSITIVE SCREENING**\n\nRecommendation: Further cardiac evaluation advised. Please consult with a cardiologist.")
             else:
                 st.success(
-                    "**✅ NEGATIVE SCREENING**\n\nRecommendation: Patient appears to be at lower risk. Continue regular health monitoring.")
+                    "** NEGATIVE SCREENING**\n\nRecommendation: Patient appears to be at lower risk. Continue regular health monitoring.")
 
             # BMI calculation
             bmi = weight / ((height / 100) ** 2)
@@ -295,22 +295,22 @@ def main():
     elif not st.session_state.form_submitted:
         # Initial state - show instructions
         st.info(
-            "ℹ️ Please fill in the patient information above and click 'Assess Cardiac Risk' to begin the evaluation.")
+            " Please fill in the patient information above and click 'Assess Cardiac Risk' to begin the evaluation.")
 
         col1, col2, col3 = st.columns(3)
 
         with col1:
-            st.markdown("### 🎯 Purpose")
+            st.markdown("###  Purpose")
             st.write(
                 "This tool provides preliminary cardiac risk assessment based on patient vitals, lab results, and lifestyle factors.")
 
         with col2:
-            st.markdown("### ⚙️ How It Works")
+            st.markdown("###  How It Works")
             st.write(
                 "Using machine learning algorithms trained on cardiovascular health data to identify potential risk factors.")
 
         with col3:
-            st.markdown("### ⚠️ Disclaimer")
+            st.markdown("###  Disclaimer")
             st.write(
                 "This is a screening tool only. Always consult healthcare professionals for medical diagnosis and treatment.")
 
