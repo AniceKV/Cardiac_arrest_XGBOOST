@@ -10,7 +10,7 @@ st.set_page_config(
 )
 
 MODEL_PATH = "models/heart_attack_detection.pkl"
-THRESHOLD = 0.5  # binary classification
+THRESHOLD = 0.35  # binary classification
 
 # ---------------- LOAD MODEL ----------------
 @st.cache_resource

@@ -53,7 +53,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 MODEL_PATH = "models/cardiac_failure_detection.pkl"
-THRESHOLD = 0.35
+THRESHOLD = 0.30
 
 BINS = [0.0, 0.20, 0.35, 0.50, 0.70, 1.0]
 LABELS = ["Very Low Risk", "Low Risk", "Moderate Risk", "High Risk", "Very High Risk"]
