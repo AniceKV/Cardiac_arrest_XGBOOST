@@ -1,31 +1,29 @@
 import streamlit as st
 import math
 
-BANNER_URL = "assets/corvigil_banner.jepg"  # or "https://your-image-url.com/banner.png"
-
 APP_DIRECTORY = [
     {
         "title": "Cardiac Risk Assessment",
         "description": "Comprehensive screening tool analyzing vitals and lifestyle factors to predict general cardiac risk.",
-        "icon": "",
+        "icon": "❤️‍🩹",
         "url": "https://anice-tools-cardiac-report.streamlit.app/",
         "button_text": "Launch Assessment",
         "theme_color": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-        "image_url": 'assets/cardiac_problem.jpg',
+        "image_url": None,
     },
     {
         "title": "Heart Attack Predictor",
         "description": "Advanced AI model focused specifically on detecting immediate myocardial infarction probability.",
-        "icon": "",
+        "icon": "💔",
         "url": "https://anice-tools-heart-attack-predict.streamlit.app/",
         "button_text": "Check Risk",
         "theme_color": "linear-gradient(135deg, #FF6B9D 0%, #C9184A 100%)",
-        "image_url": 'assets/heart_attack.jpg'
+        "image_url": None,
     },
     {
         "title": "ECG Analysis Tool",
         "description": "Upload and analyze ECG waveforms for arrhythmia detection (Coming Soon).",
-        "icon": "",
+        "icon": "📈",
         "url": "#",
         "button_text": "Coming Soon",
         "theme_color": "linear-gradient(135deg, #11998e 0%, #38ef7d 100%)",
@@ -195,19 +193,14 @@ st.markdown("""
 # 4. MAIN LAYOUT LOGIC
 # -----------------------------------------------------------------------------
 def main():
-    # --- BANNER SECTION ---
-    # We display the image if the variable is set
-    if BANNER_URL:
-        try:
-            st.image(BANNER_URL, use_container_width=True)
-        except:
-            # Fallback if image not found (just to prevent crash)
-            st.warning(f"Banner image not found at: {BANNER_URL}")
-
+    st.write("")
     # Header
     st.markdown('<div class="main-header">CorVigil Portal</div>', unsafe_allow_html=True)
     st.markdown('<div class="sub-header">Centralized Cardiovascular Health Intelligence Platform</div>',
                 unsafe_allow_html=True)
+
+    st.write("")
+    st.write("")
 
     # Grid System
     COLS_PER_ROW = 3
